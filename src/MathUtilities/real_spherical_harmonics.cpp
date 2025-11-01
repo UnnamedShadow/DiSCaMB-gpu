@@ -67,6 +67,7 @@ namespace discamb {
 
 namespace real_spherical_harmonics{
 
+#pragma omp declare target
 
     std::vector<std::vector<double> > getDensityToWfnNormalization()
     {
@@ -202,6 +203,8 @@ namespace real_spherical_harmonics{
 
 
 }
+
+#pragma omp end declare target
 
 } // namespace discamb
 

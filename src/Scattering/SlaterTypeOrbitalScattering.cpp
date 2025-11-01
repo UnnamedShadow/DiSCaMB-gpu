@@ -5,6 +5,8 @@ namespace discamb {
 
 namespace sto_scattering {
 
+#pragma omp declare target
+
 REAL scatteringSphericalDensity(
     const std::vector<REAL> &coefficients,
     const std::vector<REAL> &exponents,
@@ -35,6 +37,8 @@ REAL gFunction(int l, const int n, REAL const h, REAL const Z)
     return 0.0;
 
 }
+
+#pragma omp end declare target
 
 }
 } // namespace discamb

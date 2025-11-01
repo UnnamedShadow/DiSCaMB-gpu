@@ -47,6 +47,7 @@ REAL gFunction(int l, const int n, REAL const h, REAL const Z);
 
 //------------ IMPLEMENTATION -----------------
 
+#pragma omp declare target
 
 template<int l>
 REAL sto_scattering::gFunction(
@@ -181,6 +182,8 @@ REAL sto_scattering::gFunction(
 
     return value;
 }
+
+#pragma omp end declare target
 
 /** @}*/
 

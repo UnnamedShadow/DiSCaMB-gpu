@@ -490,6 +490,7 @@ namespace scattering_utilities
         }
     }
 
+#pragma omp declare target
 
     void init_line_multipliers(
         const Vector3d& lineStepCart,
@@ -728,6 +729,8 @@ namespace scattering_utilities
         }
 
     }
+
+#pragma omp end declare target
 
 }
 

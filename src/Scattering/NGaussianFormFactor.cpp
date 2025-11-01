@@ -92,6 +92,8 @@ std::string NGaussianFormFactor::get_label() const
     return mLabel;
 }
 
+#pragma omp declare target
+
 double NGaussianFormFactor::calculate_sinth(
     double x) // x=sin_theta_over_lambda
 const
@@ -126,5 +128,6 @@ double NGaussianFormFactor::calculate_h(
 
 }
 
+#pragma omp end declare target
 
 } // namespace discamb

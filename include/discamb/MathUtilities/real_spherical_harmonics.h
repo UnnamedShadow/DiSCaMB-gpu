@@ -92,6 +92,7 @@ namespace real_spherical_harmonics
 
     // TEMPLATE IMPLEMENTATION
 
+#pragma omp declare target
 
     template<int MAX_L>
     inline void getDensityNormalized(
@@ -272,6 +273,8 @@ namespace real_spherical_harmonics
         } // maxL>0
 
     } //getPolynomials
+
+#pragma omp end declare target
 
 }
 /** @} */

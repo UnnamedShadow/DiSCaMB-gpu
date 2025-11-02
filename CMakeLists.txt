@@ -68,14 +68,21 @@ endif()
 
 find_package(OpenMP)
 
+option(USE_AMDGPU "Use AMDGPU backend for OpenMP offload" OFF)
+
 # Configure OpenMP GPU offloading flags if OpenMP is found
 if(OpenMP_FOUND)
   add_definitions(-DUSE_GPU_OFFLOAD)
 
   if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    # GCC with nvptx offloading: only add the offload switches (do not forward host-only security/LTO flags)
-    # CRITICAL: Add -fno-lto to disable LTO and avoid CF protection issues
-    set(_omf "-fopenmp -foffload=-lm -fno-lto")
+    if(USE_AMDGPU)
+      # GCC with amdgcn offloading
+      set(_omf "-fopenmp -foffload=amdgcn-amdhsa- -fno-lto")
+    else()
+      # GCC with nvptx offloading: only add the offload switches (do not forward host-only security/LTO flags)
+      # CRITICAL: Add -fno-lto to disable LTO and avoid CF protection issues
+      set(_omf "-fopenmp -foffload=-lm -fno-lto")
+    endif()
     # Strip unsupported flags from global flags before combining
     strip_unsupported_flags(_clean_CXX_FLAGS CMAKE_CXX_FLAGS)
     set(CMAKE_CXX_FLAGS "${_clean_CXX_FLAGS} ${_omf}")
@@ -85,7 +92,11 @@ if(OpenMP_FOUND)
     set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -fno-lto")
     set(CMAKE_STATIC_LINKER_FLAGS "${CMAKE_STATIC_LINKER_FLAGS}")
   elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
-    set(_omf "-fopenmp -fopenmp-targets=nvptx64-nvidia-cuda")
+    if(USE_AMDGPU)
+      set(_omf "-fopenmp -fopenmp-targets=amdgcn-amd-amdhsa")
+    else()
+      set(_omf "-fopenmp -fopenmp-targets=nvptx64-nvidia-cuda")
+    endif()
     strip_unsupported_flags(_clean_CXX_FLAGS CMAKE_CXX_FLAGS)
     set(CMAKE_CXX_FLAGS "${_clean_CXX_FLAGS} ${_omf}")
   elseif(CMAKE_CXX_COMPILER_ID STREQUAL "IntelLLVM")
